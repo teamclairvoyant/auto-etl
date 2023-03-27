@@ -1,11 +1,11 @@
-#Auto-ETL
+# Auto-ETL
 
 Prerequisite
 
 - Python 3.11
 - Poetry
 
-#Steps to configure the repo locally
+# Steps to configure the repo locally
 
 - Clone the repo and cd into src directory
 - Run cmd -> `poetry config virtualenvs.in-project true`
