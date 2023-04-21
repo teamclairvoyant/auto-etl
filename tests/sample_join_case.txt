@@ -1,0 +1,13 @@
+select
+t1.col_1,
+t1.col_2,
+t1.col_3,
+t2.col_2,
+t2.col_4
+from schema.table1 as t1
+inner join
+schema.table2 as t2
+on
+t1.col_1 = t2.col_1 
+and
+t1.col_3 = t2.col_3
