@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Dict, List
+from typing import Dict
 
 import pandas as pd
 from pydantic import Json
@@ -49,7 +49,7 @@ def validate_joins_mapping(joins_and_filters_conf: Dict[str, Dict]) -> None:
     logger.info('validating and processing joins mapping conf')
     num_joins = len(joins_and_filters_conf)
     logger.info(
-        'found {%d} number of mappings in the configurations', num_joins)
+        'found %d mappings in the configurations', num_joins)
     for _index in joins_and_filters_conf:
         _map = joins_and_filters_conf[_index]
         if _index == 0:

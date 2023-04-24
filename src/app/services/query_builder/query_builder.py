@@ -6,7 +6,7 @@ from pydantic.dataclasses import dataclass
 
 from app.etl_exceptions import AutoETLException
 from app.services.config_parser import ConfigParser, MetadataParser
-from app.services.query_builder import RedshiftDialact
+from app.services.query_builder import RedshiftDialect
 from app.utils import excel_to_json, validate_joins_mapping
 
 logger = logging.getLogger(__name__)
@@ -49,10 +49,9 @@ class QueryBuilder:
             meta_xls, 'joins_and_filters', 'index')
 
         validate_joins_mapping(joins_and_filters)
-
         match _config['target']:
             case 'redshift':
-                RedshiftDialact(target_table_json, joins_and_filters).build()
+                RedshiftDialect(target_table_json, joins_and_filters).get_sql()
 
             case _:
                 logger.error(

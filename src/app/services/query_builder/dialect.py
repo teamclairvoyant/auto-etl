@@ -45,19 +45,20 @@ class RedshiftQueryBuilder(QueryBuilder):
 
 
 @dataclass()
-class RedshiftDialact:
+class RedshiftDialect:
     target_table_conf: List[Dict]
-    joins_and_filers_conf: Dict[str, Dict]
+    joins_and_filters_conf: Dict[str, Dict]
 
-    def build(self) -> None:
+    def get_sql(self) -> None:
         """Method to trrigger Redshift query builder
         """
         logger.info('building Redshift query from the mappings file')
 
         _query = RedshiftQuery()
-        for _index in self.joins_and_filers_conf:
 
-            _map = self.joins_and_filers_conf[_index]
+        for _index in self.joins_and_filters_conf:
+
+            _map = self.joins_and_filters_conf[_index]
 
             if int(_index) == 0:
                 schema1, schema2 = Schema(_map['driving_table'].split(
@@ -68,7 +69,7 @@ class RedshiftDialact:
                     Table(_map['reference_table'].split('.')[1],
                           schema=schema2, alias=_map['reference_table_alias'])
 
-                _query = _query.from_(table1).inner_join(  # type: ignore
+                _query = _query.from_(table1).inner_join(
                     table2).on(_map['join_condition'])
             else:
                 schema2 = Schema(_map['reference_table'].split(
