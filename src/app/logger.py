@@ -6,14 +6,15 @@ from datetime import datetime
 def setup_logging(log_dir: str):
     """Load logging configuration"""
 
-    log_file_name = log_dir + '/' + 'minimal-app-' + datetime.now().strftime("%Y-%m-%d") + '.log'
+    log_file_name = log_dir + '/' + 'minimal-app-' + \
+        datetime.now().strftime("%Y-%m-%d") + '.log'
 
     loging_config = {
         'version': 1,
         'disable_existing_loggers': False,
         'loggers': {
             'root': {
-                'level': 'INFO',
+                'level': 'DEBUG',
                 'handlers': ['debug_console_handler', 'info_rotating_file_handler'],
             },
             'src': {

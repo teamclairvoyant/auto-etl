@@ -59,7 +59,7 @@ confidence=
 #
 # Kubeflow disables string-interpolation because we are starting to use f
 # style strings
-disable=bad-indentation,unspecified-encoding,missing-class-docstring,missing-module-docstring,no-name-in-module,dangerous-default-value,broad-except,import-outside-toplevel,bare-except
+disable=bad-indentation,unspecified-encoding,missing-class-docstring,missing-module-docstring,no-name-in-module,dangerous-default-value,broad-except,import-outside-toplevel,bare-except,invalid-name
 
 
 [REPORTS]

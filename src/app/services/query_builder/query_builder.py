@@ -1,6 +1,7 @@
 import dataclasses
 import logging
 import os
+import sys
 
 from pydantic.dataclasses import dataclass
 
@@ -47,11 +48,13 @@ class QueryBuilder:
         target_table_json = excel_to_json(meta_xls, 'target_table', 'records')
         joins_and_filters = excel_to_json(
             meta_xls, 'joins_and_filters', 'index')
+        select_sources = excel_to_json(meta_xls, 'select_sources', 'records')
 
         validate_joins_mapping(joins_and_filters)
         match _config['target']:
             case 'redshift':
-                RedshiftDialect(target_table_json, joins_and_filters).get_sql()
+                RedshiftDialect(target_table_json,
+                                joins_and_filters, select_sources).get_sql()
 
             case _:
                 logger.error(

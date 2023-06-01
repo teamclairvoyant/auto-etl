@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from pydantic import Json
@@ -10,7 +10,10 @@ from app.etl_exceptions import AutoETLException
 
 logger = logging.getLogger(__name__)
 
-JOIN_TYPES = ('inner', 'left', 'right')
+JOIN_TYPES = ('inner join', 'left join', 'right join',
+              'cross join', 'full outer join')
+
+transform_format = '{func}({exp})'
 
 
 def is_valid_file(file_path: str) -> bool:
@@ -26,7 +29,7 @@ def is_valid_file(file_path: str) -> bool:
 
 
 def excel_to_json(excel_file: pd.ExcelFile, sheet_name: str, _orient) -> Json:
-    """_summary_
+    """method to parse excel to json
 
     Args:
         excel_file (ExcelFile): name of the excel file
@@ -36,7 +39,28 @@ def excel_to_json(excel_file: pd.ExcelFile, sheet_name: str, _orient) -> Json:
         json: returns json object of the excel file
     """
     logger.debug('parsing excel to json')
+    if sheet_name == "select_sources":
+        select_conf = json.loads(pd.read_excel(
+            excel_file, sheet_name).to_json(orient=_orient))
+        return construct_select_transform(select_conf)
     return json.loads(pd.read_excel(excel_file, sheet_name).to_json(orient=_orient))
+
+
+def construct_select_transform(select_conf: List[Dict]) -> List[Dict]:
+    """method to construct the select transformation conf
+
+    Args:
+        select_conf (List[Dict]): select transformations from excel mapping
+
+    Returns:
+        List[Dict]
+    """
+    _conf = []
+    for _select in select_conf:
+        _select['transformation'] = transform_format.format(
+            func=_select['transformation'], exp=_select['arguments'])
+        _conf.append(_select)
+    return _conf
 
 
 def validate_joins_mapping(joins_and_filters_conf: Dict[str, Dict]) -> None:
@@ -53,14 +77,15 @@ def validate_joins_mapping(joins_and_filters_conf: Dict[str, Dict]) -> None:
     for _index in joins_and_filters_conf:
         _map = joins_and_filters_conf[_index]
         if _index == 0:
-            if _map['driving_table'] is None or _map['reference_table'] is None:
+            if _map['driving_table'] is None or \
+                    (_map['reference_table'] is None and _map['reference_subquery'] is None):
                 logger.error(
                     'joins and filters not provided properly. Please validate the mappings file')
                 raise AutoETLException(
                     'joins and filters not provided properly. Please validate the mappings file')
 
         else:
-            if _map['reference_table'] is None:
+            if _map['reference_table'] is None and _map['reference_subquery'] is None:
                 logger.error(
                     'joins and filters not provided properly. Please validate the mappings file')
                 raise AutoETLException(
