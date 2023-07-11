@@ -1,7 +1,6 @@
 import dataclasses
 import logging
 import os
-import sys
 
 from pydantic.dataclasses import dataclass
 
